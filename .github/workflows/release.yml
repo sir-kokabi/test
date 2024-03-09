@@ -1,6 +1,9 @@
 name: Release Extensions
 
 on:
+  push:
+    branches:
+     - main
   workflow_dispatch:
 
 jobs:
@@ -21,10 +24,16 @@ jobs:
           echo "Version read from manifest.json: $VERSION"
           echo "::set-output name=version::$VERSION"
 
+      ##########################################################################################
+      # Build extensions with bepp
+      # 
+      # By default the output of packaged extensions is in build/extensions
+      ##########################################################################################
       - name: Build
         uses: pigeonposse/bepp
         ##########################################################################################
         # For custom config file input
+        # 
         # Default looks for file in workspace path bepp.config.json, bepp.config.yaml, bepp.config.toml
         # More info for config file: https:/bepp.pigeonposse.com/guide/build/config-file
         ##########################################################################################
