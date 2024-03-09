@@ -2,7 +2,7 @@
   "shared": {
     "id": "bepp",
     "input": {
-      "chromium": "~/exts/chromium",
+      "chromium": "~/exts/chrome-mv3-prod",
     }
   },
   "build": [
