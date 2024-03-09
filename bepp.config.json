@@ -1,0 +1,11 @@
+{
+  "shared": {
+    "id": "bepp",
+    "input": {
+      "chromium": "~/exts/chromium",
+    }
+  },
+  "build": [
+    { "type": "safari" },   
+  ]
+}
