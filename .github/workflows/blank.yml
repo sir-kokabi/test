@@ -12,9 +12,15 @@ jobs:
       run: unzip safari-mv3-prod.zip
     - name: Convert to Safari extension
       run: xcrun safari-web-extension-converter ./
+    - name: Debugging
+      run: |
+        ls -l
+        pwd
+        cd "Safari Web Extension" || exit 1
+        ls -l
+      # Adjust the directory name handling spaces
     - name: Archive converted extension
       run: |
-        cd "Safari Web Extension"  # Adjust the directory name handling spaces
         zip -r ../twifiner-safari.zip .
       # Upload the zip as an artifact is optional (replace if needed)
       # - uses: actions/upload-artifact@v3
