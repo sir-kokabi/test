@@ -1,0 +1,16 @@
+{
+    "shared": {
+      "id": "Twifiner",
+      "input": {
+        "chromium": "./chrome-mv3-prod"
+      }
+    },
+    "build": [
+      { "type": "chrome" },
+      { 
+        "type": "safari", 
+        "input": "./safari-mv3-prod"
+      }
+    ]
+  }
+  

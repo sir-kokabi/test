@@ -1,0 +1,48 @@
+name: Convert Safari Extension
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build extensions with bepp
+    runs-on: macos-latest # Must be macos for safari extension build
+    steps:
+      - name: 🛎 Checkout
+        uses: actions/checkout@v4
+
+      - name: Get manifest.json version
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' chrome-mv3-prod/manifest.json)
+          echo "Version read from manifest.json: $VERSION"
+          echo "::set-output name=version::$VERSION"
+
+      - name: Build
+        uses: pigeonposse/bepp
+        ##########################################################################################
+        # For custom config file input
+        # Default looks for file in workspace path bepp.config.json, bepp.config.yaml, bepp.config.toml
+        # More info for config file: https:/bepp.pigeonposse.com/guide/build/config-file
+        ##########################################################################################
+        # with:
+        #   file: './custom-bepp.config.json'
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}  # Use the version from manifest.json
+          release_name: Release v${{ steps.get_version.outputs.version }}  # Use the version from manifest.json
+          body: |
+            Extension releases
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/extensions  # Path to the directory containing your assets
+          asset_name: extensions  # Set your desired asset name
+          asset_content_type: application/zip  # Set the content type of your asset
