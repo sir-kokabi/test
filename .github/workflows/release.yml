@@ -1,4 +1,4 @@
-name: Convert Safari Extension
+name: Release Extensions
 
 on:
   workflow_dispatch:
@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: 🛎 Checkout
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Get manifest.json version
         id: get_version
