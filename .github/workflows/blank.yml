@@ -11,4 +11,4 @@ jobs:
       - name: 🛎 Checkout
         uses: actions/checkout@v4
       - name: Build
-        uses: pigeonposse/bepp
+        uses: pigeonposse/bepp@1.0.3
