@@ -8,12 +8,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Install Xcode Command Line Tools
-      run: |
-        xcode-select --install
-      # Make sure xcode-select points to the installed version
-      env:
-        DEVELOPER_DIR: /Library/Developer/CommandLineTools
     - name: Unzip extension
       run: unzip safari-mv3-prod.zip
     - name: Convert to Safari extension
