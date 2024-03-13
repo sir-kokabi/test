@@ -1,15 +1,12 @@
 name: Release Extensions
 
 on:
-  push:
-    branches:
-     - main
   workflow_dispatch:
 
 jobs:
   build:
     name: Build extensions with bepp
-    runs-on: macos-latest # Must be macos for safari extension build
+    runs-on: macos-13 # Must be macos for safari extension build
     steps:
       - name: 🛎 Checkout
         uses: actions/checkout@v4
@@ -18,11 +15,11 @@ jobs:
           node-version: 20
 
       - name: Get manifest.json version
-        id: get_version
+        id: manifest
         run: |
           VERSION=$(jq -r '.version' chrome-mv3-prod/manifest.json)
           echo "Version read from manifest.json: $VERSION"
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       ##########################################################################################
       # Build extensions with bepp
@@ -30,7 +27,7 @@ jobs:
       # By default the output of packaged extensions is in build/extensions
       ##########################################################################################
       - name: Build
-        uses: pigeonposse/bepp
+        uses: pigeonposse/bepp@v1.1.0
         ##########################################################################################
         # For custom config file input
         # 
@@ -41,20 +38,13 @@ jobs:
         #   file: './custom-bepp.config.json'
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}  # Use the version from manifest.json
-          release_name: Release v${{ steps.get_version.outputs.version }}  # Use the version from manifest.json
+          tag: v${{ steps.manifest.outputs.version }}  # Use the version from manifest.json
+          name: Twifiner v${{ steps.manifest.outputs.version }}  # Use the version from manifest.json
           body: |
-            Extension releases
+            Twifiner Extension releases
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/extensions  # Path to the directory containing your assets
-          asset_name: extensions  # Set your desired asset name
-          asset_content_type: application/zip  # Set the content type of your asset
+          artifacts: build/extensions/*.zip # BEPP default output path
+          allowUpdates: true
