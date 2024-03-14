@@ -1,4 +1,4 @@
-name: Convert Safari Extension
+name: Release Extensions
 
 on:
   workflow_dispatch:
@@ -6,9 +6,45 @@ on:
 jobs:
   build:
     name: Build extensions with bepp
-    runs-on: macos-latest # Must be macos for safari extension build
+    runs-on: macos-13 # Must be macos for safari extension build
     steps:
       - name: 🛎 Checkout
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Get manifest.json version
+        id: manifest
+        run: |
+          VERSION=$(jq -r '.version' chrome-mv3-prod/manifest.json)
+          echo "Version read from manifest.json: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      ##########################################################################################
+      # Build extensions with bepp
+      # 
+      # By default the output of packaged extensions is in build/extensions
+      ##########################################################################################
       - name: Build
-        uses: pigeonposse/bepp@1.0.3
+        uses: pigeonposse/bepp@v1.1.0
+        ##########################################################################################
+        # For custom config file input
+        # 
+        # Default looks for file in workspace path bepp.config.json, bepp.config.yaml, bepp.config.toml
+        # More info for config file: https:/bepp.pigeonposse.com/guide/build/config-file
+        ##########################################################################################
+        # with:
+        #   file: './custom-bepp.config.json'
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ steps.manifest.outputs.version }}  # Use the version from manifest.json
+          name: Twifiner v${{ steps.manifest.outputs.version }}  # Use the version from manifest.json
+          body: |
+            Twifiner Extension releases
+          draft: false
+          prerelease: false
+          artifacts: build/extensions/*.zip # BEPP default output path
+          allowUpdates: true
