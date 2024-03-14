@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Build extensions with bepp
-    runs-on: macos-13 # Must be macos for safari extension build
+    runs-on: macos-latest # Must be macos for safari extension build
     steps:
       - name: 🛎 Checkout
         uses: actions/checkout@v4
